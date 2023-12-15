@@ -16,4 +16,7 @@ public interface EmployeeService {
 
     @Transactional(readOnly = true)
     List<EmployeeDepartmentDTO> findEmployeesWithDepartments();
+
+    @Transactional(readOnly = true)
+    List<EmployeeMinDTO> findByNameIgnoreCase(String name);
 }

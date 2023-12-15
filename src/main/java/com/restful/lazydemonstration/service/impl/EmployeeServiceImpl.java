@@ -24,7 +24,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public EmployeeMinDTO findByIdMin(Long id) {
-
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
 
@@ -33,7 +32,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Transactional(readOnly = true)
     public EmployeeDepartmentDTO findByIdWithDepartment(Long id) {
-
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
 
@@ -42,12 +40,24 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Transactional(readOnly = true)
     public List<EmployeeDepartmentDTO> findEmployeesWithDepartments() {
+        Optional<List<Employee>> employeesOptional = Optional.ofNullable(employeeRepository.findEmployeesWithDepartments());
 
-        List<Employee> employees = employeeRepository.findEmployeesWithDepartments();
+        return employeesOptional
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(EmployeeDepartmentDTO::new)
+                .collect(Collectors.toList());
+    }
 
-        if (employees == null)
-            return Collections.emptyList();
 
-        return employees.stream().map(EmployeeDepartmentDTO::new).collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public List<EmployeeMinDTO> findByNameIgnoreCase(String name) {
+        Optional<List<Employee>> employeesOptional = Optional.ofNullable(employeeRepository.findByNameIgnoreCase(name));
+
+        return employeesOptional
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(EmployeeMinDTO::new)
+                .collect(Collectors.toList());
     }
 }
